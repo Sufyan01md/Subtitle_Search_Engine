@@ -9,4 +9,4 @@ sqlite-utils
 tiktoken
 openai
 torch
-numpy
+numpy==1.24.3
