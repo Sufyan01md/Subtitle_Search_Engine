@@ -1,0 +1,6 @@
+streamlit
+sqlite3
+whisper
+google-generativeai
+chromadb
+sentence-transformers
