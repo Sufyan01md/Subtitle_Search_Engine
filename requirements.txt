@@ -6,3 +6,7 @@ sentence-transformers
 openai-whisper
 chromadb==0.4.24
 sqlite-utils
+tiktoken
+openai
+torch
+numpy
