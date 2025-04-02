@@ -4,3 +4,5 @@ google-generativeai
 chromadb
 sentence-transformers
 openai-whisper
+chromadb
+sqlite-utils
