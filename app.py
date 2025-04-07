@@ -9,7 +9,7 @@ from sentence_transformers import SentenceTransformer
 st.title("Subtitle Search Engine")
 
 # Load the embeddings model
-embed_model = SentenceTransformer("all-MiniLM-L6-v2")
+embed_model = SentenceTransformer("models/all-MiniLM-L6-v2")
 
 # Configure Google Gemini API
 genai.configure(api_key="AIzaSyB92k02wczwkOK3VWuLQZ5JyJWj-uAV6Tk")
