@@ -1,8 +1,9 @@
 import streamlit as st
 import whisper
 import google.generativeai as genai
-import chromadb
-from chromadb.config import Settings
+import faiss
+import numpy as np
+import pickle
 from sentence_transformers import SentenceTransformer
 
 st.title("Subtitle Search Engine")
@@ -16,25 +17,23 @@ genai.configure(api_key="AIzaSyB92k02wczwkOK3VWuLQZ5JyJWj-uAV6Tk")
 # Load Whisper model
 whisper_model = whisper.load_model("base")
 
+# Load FAISS index and metadata
+faiss_index = faiss.read_index("data/faiss_index.index")
+with open("data/faiss_metadata.pkl", "rb") as f:
+    metadata = pickle.load(f)
+
 def transcribe_audio(audio_file):
-    """Transcribe audio file to text using Whisper.""" 
+    """Transcribe audio file to text using Whisper."""
     with open(audio_file, "rb") as f:
         audio = whisper.load_audio(f)
     transcription = whisper_model.transcribe(audio)
     return transcription["text"]
 
-# Connect to ChromaDB using in-memory client
-chroma_client = chromadb.Client(Settings(
-    chroma_api_impl="chromadb.api.local.LocalAPI",
-    persist_directory="data/chroma_db"
-))
-collection = chroma_client.get_collection("subtitles")
-
 def search_subtitles(query):
-    """Search subtitles using ChromaDB.""" 
-    query_embedding = embed_model.encode([query])[0].tolist()
-    results = collection.query(query_embeddings=[query_embedding], n_results=5)
-    return [res["text"] for res in results["metadatas"][0]]
+    """Search subtitles using FAISS."""
+    query_embedding = embed_model.encode([query]).astype("float32")
+    distances, indices = faiss_index.search(query_embedding, k=5)
+    return [metadata[i]["text"] for i in indices[0]]
 
 # UI
 query = st.text_input("Enter your search query:")
