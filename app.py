@@ -2,6 +2,7 @@ import streamlit as st
 import whisper
 import google.generativeai as genai
 import chromadb
+from chromadb.config import Settings
 from sentence_transformers import SentenceTransformer
 
 st.title("Subtitle Search Engine")
@@ -16,18 +17,21 @@ genai.configure(api_key="AIzaSyB92k02wczwkOK3VWuLQZ5JyJWj-uAV6Tk")
 whisper_model = whisper.load_model("base")
 
 def transcribe_audio(audio_file):
-    """Transcribe audio file to text using Whisper."""
+    """Transcribe audio file to text using Whisper.""" 
     with open(audio_file, "rb") as f:
         audio = whisper.load_audio(f)
     transcription = whisper_model.transcribe(audio)
     return transcription["text"]
 
-# Connect to ChromaDB
-chroma_client = chromadb.PersistentClient(path="data/chroma_db")
+# Connect to ChromaDB using in-memory client
+chroma_client = chromadb.Client(Settings(
+    chroma_api_impl="chromadb.api.local.LocalAPI",
+    persist_directory="data/chroma_db"
+))
 collection = chroma_client.get_collection("subtitles")
 
 def search_subtitles(query):
-    """Search subtitles using ChromaDB."""
+    """Search subtitles using ChromaDB.""" 
     query_embedding = embed_model.encode([query])[0].tolist()
     results = collection.query(query_embeddings=[query_embedding], n_results=5)
     return [res["text"] for res in results["metadatas"][0]]
@@ -52,4 +56,3 @@ if st.button("Search"):
             st.write(f"**Match {i+1}:** {result}")
     else:
         st.warning("Please enter a search query!")
-
