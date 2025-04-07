@@ -6,3 +6,4 @@ sentence-transformers==2.2.2
 openai==1.16.1
 tqdm==4.66.2
 faiss-cpu
+openai-whisper
