@@ -8,3 +8,4 @@ tqdm==4.66.2
 faiss-cpu
 openai-whisper
 google-generativeai==0.4.1
+chromadb==0.4.24
